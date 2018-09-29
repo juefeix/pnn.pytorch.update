@@ -1,5 +1,5 @@
 # New PNN Repository with Updates
-This repo will house the new pnn code, along with updates. Please stay tune.
+This repo will house the new pnn code, along with updates. We are currently investigating the issue raised in the recent Reddit discussion with thorough experiments and analysis. Please stay tune.
 
 ***
 
