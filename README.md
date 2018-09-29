@@ -1,5 +1,5 @@
-# Updated PNN Repository
-This repo will house the updated pnn code.
+# New PNN Repository with Updates
+This repo will house the new pnn code, along with updates. Please stay tune.
 
 ***
 
