@@ -1,6 +1,12 @@
 # New PNN Repository with Updates
 This repo will house the new pnn code, along with updates. We are currently investigating the issue raised in the recent Reddit discussion with thorough experiments and analysis. Please stay tuned.
 
+
+***
+## Update
+
+Oct. 20, 2018: The evluation is paused due to incoming CVPR deadline. It will be resumed afterwards. Please check back here for udpates.
+
 ***
 
 ## Recent Reddit Discussion
