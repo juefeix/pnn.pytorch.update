@@ -5,7 +5,7 @@ This repo will house the new pnn code, along with updates. We are currently inve
 ***
 ## Update
 
-Oct. 20, 2018: The evluation is paused due to incoming CVPR deadline. It will be resumed afterwards. Please check back here for updates.
+Oct. 20, 2018: We are experiencing some delays due to incoming deadlines. Please check back here for updates.
 
 ***
 
