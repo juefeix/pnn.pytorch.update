@@ -5,7 +5,7 @@ This repo will house the new pnn code, along with updates. We are currently inve
 ***
 ## Update
 
-Nov. 17, 2018: This is Felix, lead author of the PNN paper. Our analysis is almost done, we will be releasing it on 11/24.
+Nov. 17, 2018: Our analysis is almost done, we will be releasing it on 11/24.
 
 Oct. 20, 2018: We are experiencing some delays due to incoming deadlines. Please check back here for updates.
 
