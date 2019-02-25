@@ -4,11 +4,7 @@ import torch.nn.functional as F
 from utils import act_fn, print_values
 
 
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-else:
-    device = torch.device("cpu")
-
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 """ ****************** Modified (Michael Klachko) PNN Implementation ******************* """
 
@@ -223,9 +219,18 @@ class PerturbBasicBlock(nn.Module):
         y = self.layers(x)
         if self.shortcut:
             residual = self.shortcut(x)
-        y += residual
+        try:
+            y += residual
+        except:
+            import ipdb;
+            ipdb.set_trace()
+            residual = self.shortcut(x)
+
         y = F.relu(y)
         return y
+
+    
+
 
 
 class PerturbResNet(nn.Module):

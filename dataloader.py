@@ -11,9 +11,12 @@ class Dataloader:
     def __init__(self, args, input_size):
         self.args = args
 
-        self.dataset_test_name = args.dataset_test
         self.dataset_train_name = args.dataset_train
+        self.dataset_test_name = args.dataset_test
         self.input_size = input_size
+
+
+        ### Eli: Train preparation ###
 
         if self.dataset_train_name == 'LSUN':
             self.dataset_train = getattr(datasets, self.dataset_train_name)(db_path=args.dataroot, classes=['bedroom_train'],
@@ -132,6 +135,9 @@ class Dataloader:
         else:
             raise(Exception("Unknown Dataset"))
 
+
+        ### Eli: Test preparation ###
+
         if self.dataset_test_name == 'LSUN':
             self.dataset_test = getattr(datasets, self.dataset_test_name)(db_path=args.dataroot, classes=['bedroom_val'],
                 transform=transforms.Compose([
@@ -141,7 +147,7 @@ class Dataloader:
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                     ])
                 )
-        
+
         elif self.dataset_test_name == 'CIFAR10' or self.dataset_test_name == 'CIFAR100':
             self.dataset_test = getattr(datasets, self.dataset_test_name)(root=self.args.dataroot, train=False, download=True,
                 transform=transforms.Compose([
@@ -169,7 +175,7 @@ class Dataloader:
                 )
 
         elif self.dataset_test_name == 'MNIST':
-            self.dataset_test = getattr(datasets, self.dataset_test_name)(root=self.args.dataroot, train=False, download=True, 
+            self.dataset_test = getattr(datasets, self.dataset_test_name)(root=self.args.dataroot, train=False, download=True,
                 transform=transforms.Compose([
                        transforms.ToTensor(),
                        transforms.Normalize((0.1307,), (0.3081,))
@@ -231,7 +237,7 @@ class Dataloader:
                 loader_input=self.loader_input,
                 loader_label=self.loader_label,
                 )
-            
+
         else:
             raise(Exception("Unknown Dataset"))
 
@@ -252,4 +258,5 @@ class Dataloader:
         
             dataloader_test = torch.utils.data.DataLoader(self.dataset_test, batch_size=self.args.batch_size,
                 shuffle=False, num_workers=int(self.args.nthreads), pin_memory=True)
+
             return dataloader_train, dataloader_test

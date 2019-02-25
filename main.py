@@ -17,7 +17,7 @@ result_path = os.path.join(result_path, datetime.now().strftime('%Y-%m-%d_%H-%M-
 parser = argparse.ArgumentParser(description='Your project title goes here')
 
 # ======================== Data Setings ============================================
-parser.add_argument('--dataset-test', type=str, default='CIFAR10', metavar='', help='name of training dataset')
+parser.add_argument('--dataset-test', type=str, default='CIFAR10', metavar='', help='name of testing dataset')
 parser.add_argument('--dataset-train', type=str, default='CIFAR10', metavar='', help='name of training dataset')
 parser.add_argument('--dataroot', type=str, default='./data', metavar='', help='path to the data')
 parser.add_argument('--save', type=str, default=result_path +'Save', metavar='', help='save the trained models here')
@@ -55,7 +55,7 @@ parser.add_argument('--filter_size', type=int, default=0, metavar='', help='use 
 parser.add_argument('--first_filter_size', type=int, default=0, metavar='', help='use conv layer with this kernel size in FirstLayer')
 parser.add_argument('--nfilters', type=int, default=64, metavar='', help='number of filters in each layer')
 parser.add_argument('--nmasks', type=int, default=1, metavar='', help='number of noise masks per input channel (fan out)')
-parser.add_argument('--level', type=float, default=0.5, metavar='', help='noise level for uniform noise')
+parser.add_argument('--level', type=float, default=0.1, metavar='', help='noise level for uniform noise')
 parser.add_argument('--scale_noise', type=float, default=1.0, metavar='', help='noise level for uniform noise')
 parser.add_argument('--noise_type', type=str, default='uniform', metavar='', help='type of noise')
 parser.add_argument('--dropout', type=float, default=0.5, metavar='', help='dropout parameter')
@@ -70,9 +70,8 @@ parser.add_argument('--nthreads', type=int, default=4, metavar='', help='number 
 parser.add_argument('--manual-seed', type=int, default=1, metavar='', help='manual seed for randomness')
 
 # ======================== Hyperparameter Setings ==================================
-parser.add_argument('--optim-method', type=str, default='SGD', metavar='', help='the optimization routine ')
-parser.add_argument('--learning-rate', type=float, default=1e-3, metavar='', help='learning rate')
-parser.add_argument('--learning-rate-decay', type=float, default=None, metavar='', help='learning rate decay')
+parser.add_argument('--optim-method', type=str, default='Adam', metavar='', help='the optimization routine ')
+parser.add_argument('--learning-rate', type=float, default=1e-4, metavar='', help='learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, metavar='', help='momentum')
 parser.add_argument('--weight-decay', type=float, default=1e-4, metavar='', help='weight decay')
 parser.add_argument('--adam-beta1', type=float, default=0.9, metavar='', help='Beta 1 parameter for Adam')
@@ -93,7 +92,7 @@ class Model:
         self.level = args.level
         self.net_type = args.net_type
         self.nmasks = args.nmasks
-        self.unique_masks = args.unique_masks
+        self.unique_masks = args.unique_masks ############# Eli: Define the network
         self.filter_size = args.filter_size
         self.first_filter_size = args.first_filter_size
         self.scale_noise = args.scale_noise
@@ -106,6 +105,7 @@ class Model:
         self.pool_type = args.pool_type
         self.mix_maps = args.mix_maps
 
+        ## Eli: Decide the dataset
         if self.dataset_train_name.startswith("CIFAR"):
             self.input_size = 32
             self.nclasses = 10
@@ -121,6 +121,9 @@ class Model:
                 self.avgpool = 14  #TODO
             elif self.filter_size == 7:
                 self.avgpool = 7
+        #
+        # else:
+        #     raise ValueError("Eli: Unknown Dataset {}".format(self.dataset_train_name))
 
         self.model = getattr(models, self.net_type)(
             nfilters=self.nfilters,
@@ -145,6 +148,7 @@ class Model:
 
         self.loss_fn = nn.CrossEntropyLoss()
 
+        ########### Eli: move all params to GPU
         if self.cuda:
             self.model = self.model.cuda()
             self.loss_fn = self.loss_fn.cuda()
@@ -203,6 +207,7 @@ class Model:
             loss = self.loss_fn(output, label)
             if self.debug:
                 print('\nBatch:', i)
+            # Eli: https://discuss.pytorch.org/t/how-are-optimizer-step-and-loss-backward-related/7350
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -235,6 +240,10 @@ class Model:
                 accuracies.append(acc)
 
         return np.mean(losses), np.mean(accuracies)
+
+
+
+### Eli: START HERE ###
 
 print('\n\n****** Creating {} model ******\n\n'.format(args.net_type))
 setup = Model(args)
@@ -315,6 +324,8 @@ print('\n\nTraining {} model {}\n\n'.format(args.net_type, msg))
 
 accuracies = []
 
+######## Eli: Train loop ########
+
 for epoch in range(init_epoch, args.nepochs, 1):
 
     tr_loss, tr_acc = train(epoch, loader_train)
@@ -349,7 +360,7 @@ if plot:
     plt.plot(range(args.nepochs), accuracies, 'black', label='model_1')
     plt.plot(range(args.nepochs), accuracies, 'red', label='model_2')
     plt.plot(range(args.nepochs), accuracies, 'blue', label='model_3')
-    plt.title('Test Accuracy (CIFAR-10)', fontsize=18)
+    plt.title('Test Accuracy {}'.format(args.dataset_test), fontsize=18)
     plt.xlabel('Epochs', fontsize=16)
     plt.ylabel('%', fontsize=16)
     plt.xticks(fontsize=14)

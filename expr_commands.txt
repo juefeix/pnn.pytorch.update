@@ -1,0 +1,8 @@
+CIFAR-10:
+
+python main.py --net-type 'perturb_resnet18' --dataset-test 'CIFAR10' --dataset-train 'CIFAR10' --nfilters 256 --batch-size 20 --learning-rate 1e-4 --first_filter_size 0 --filter_size 0 --nmasks 1 --level 0.1 --optim-method Adam --nepochs 450
+
+MNIST:
+
+python main.py --net-type 'lenet' --dataset-test 'MNIST' --dataset-train 'MNIST'
+
