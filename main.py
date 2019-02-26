@@ -133,6 +133,38 @@ class Model:
             elif self.filter_size == 7:
                 self.avgpool = 7
 
+        elif self.dataset_train_name.startswith("Fashion-MNIST"):
+            self.nclasses = 10
+            self.input_size = 28
+            if self.filter_size < 7:
+                self.avgpool = 14  #TODO
+            elif self.filter_size == 7:
+                self.avgpool = 7
+
+        elif self.dataset_train_name.startswith("CocoDetection"):
+            self.nclasses = 10
+            self.input_size = 28
+            if self.filter_size < 7:
+                self.avgpool = 14  #TODO
+            elif self.filter_size == 7:
+                self.avgpool = 7
+
+        elif self.dataset_train_name.startswith("SVHN"):
+            self.nclasses = 10
+            self.input_size = 32
+            if self.filter_size < 7:
+                self.avgpool = 10  #TODO
+            elif self.filter_size == 7:
+                self.avgpool = 10
+
+        elif self.dataset_train_name.startswith("STL10"):
+            self.nclasses = 10
+            self.input_size = 28
+            if self.filter_size < 7:
+                self.avgpool = 14  #TODO
+            elif self.filter_size == 7:
+                self.avgpool = 7
+
         elif self.dataset_train_name == "LSUN":
             self.input_size = 128
             self.nclasses = 10
@@ -203,6 +235,12 @@ class Model:
             decay = math.floor((epoch - 1) / 30)
             new_lr = self.lr * math.pow(0.1, decay)
             #print('\nReducing learning rate to {}\n'.format(new_lr))
+        elif self.dataset_train_name == 'FashionMNIST':
+            decay = math.floor((epoch - 1) / 30)
+            new_lr = self.lr * math.pow(0.1, decay)
+            #print('\nReducing learning rate to {}\n'.format(new_lr))
+        elif self.dataset_train_name == 'SVHN':
+             new_lr = self.lr * ((0.1 ** int(epoch >= 80)) * (0.1 ** int(epoch >= 120))* (0.1 ** int(epoch >= 160)))
         return new_lr
 
 

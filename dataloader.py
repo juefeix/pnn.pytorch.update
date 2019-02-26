@@ -5,6 +5,7 @@ import torch
 import datasets
 #import torch.utils.data
 import torchvision.transforms as transforms
+import ipdb
 
 class Dataloader:
 
@@ -39,7 +40,28 @@ class Dataloader:
                 )
 
         elif self.dataset_train_name == 'CocoCaption' or self.dataset_train_name == 'CocoDetection':
-            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot, train=True, download=True,
+            
+            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot,
+                transform=transforms.Compose([
+                    transforms.Scale(self.input_size),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                    ])
+                )
+
+        elif self.dataset_train_name == 'STL10':
+            
+            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot,split='train',download=True,
+                transform=transforms.Compose([
+                    transforms.Scale(self.input_size),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                    ])
+                )
+        
+        elif self.dataset_train_name == 'SVHN':
+            
+            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot,split='train',download=True,
                 transform=transforms.Compose([
                     transforms.Scale(self.input_size),
                     transforms.ToTensor(),
@@ -57,6 +79,14 @@ class Dataloader:
                 )
 
         elif self.dataset_train_name == 'MNIST':
+            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot, train=True, download=True,
+                transform=transforms.Compose([
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ])
+                )
+
+        elif self.dataset_train_name == 'Fashion-MNIST':
             self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot, train=True, download=True,
                 transform=transforms.Compose([
                        transforms.ToTensor(),
