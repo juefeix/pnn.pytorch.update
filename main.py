@@ -58,7 +58,7 @@ parser.add_argument('--nmasks', type=int, default=1, metavar='', help='number of
 parser.add_argument('--level', type=float, default=0.1, metavar='', help='noise level for uniform noise')
 parser.add_argument('--scale_noise', type=float, default=1.0, metavar='', help='noise level for uniform noise')
 parser.add_argument('--noise_type', type=str, default='uniform', metavar='', help='type of noise')
-parser.add_argument('--dropout', type=float, default=0.5, metavar='', help='dropout parameter')
+parser.add_argument('--dropout', type=float, default=1e-4, metavar='', help='dropout parameter')
 parser.add_argument('--net-type', type=str, default='resnet18', metavar='', help='type of network')
 parser.add_argument('--act', type=str, default='relu', metavar='', help='activation function (for both perturb and conv layers)')
 parser.add_argument('--pool_type', type=str, default='max', metavar='', help='pooling function (max or avg)')
@@ -106,13 +106,24 @@ class Model:
         self.mix_maps = args.mix_maps
 
         ## Eli: Decide the dataset
-        if self.dataset_train_name.startswith("CIFAR"):
+
+        if self.dataset_train_name == "CIFAR10":
             self.input_size = 32
             self.nclasses = 10
             if self.filter_size < 7:
                 self.avgpool = 4
             elif self.filter_size == 7:
                 self.avgpool = 1
+
+
+        if self.dataset_train_name == "CIFAR100":
+            self.input_size = 32
+            self.nclasses = 100
+            if self.filter_size < 7:
+                self.avgpool = 4
+            elif self.filter_size == 7:
+                self.avgpool = 1
+
 
         elif self.dataset_train_name.startswith("MNIST"):
             self.nclasses = 10
@@ -121,9 +132,17 @@ class Model:
                 self.avgpool = 14  #TODO
             elif self.filter_size == 7:
                 self.avgpool = 7
-        #
-        # else:
-        #     raise ValueError("Eli: Unknown Dataset {}".format(self.dataset_train_name))
+
+        elif self.dataset_train_name == "LSUN":
+            self.input_size = 128
+            self.nclasses = 10
+            if self.filter_size < 7:
+                self.avgpool = 4
+            elif self.filter_size == 7:
+                self.avgpool = 1
+
+        else:
+            raise ValueError("Eli: Unknown Dataset {}".format(self.dataset_train_name))
 
         self.model = getattr(models, self.net_type)(
             nfilters=self.nfilters,

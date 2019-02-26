@@ -19,7 +19,7 @@ class Dataloader:
         ### Eli: Train preparation ###
 
         if self.dataset_train_name == 'LSUN':
-            self.dataset_train = getattr(datasets, self.dataset_train_name)(db_path=args.dataroot, classes=['bedroom_train'],
+            self.dataset_train = getattr(datasets, self.dataset_train_name)(root=self.args.dataroot, classes=['bedroom_train'],
                 transform=transforms.Compose([
                     transforms.Scale(self.input_size),
                     transforms.CenterCrop(self.input_size),
